@@ -16,7 +16,7 @@ namespace Frobenius
             {
                 Console.WriteLine("Iteration 1.");
                 InvokeWithTimer("One thread", () => OneThreadFrobenius(I, n));
-                InvokeWithTimer("Multithread V1", () => MultiThreadFrobenius(I, n));
+                InvokeWithTimer("Multithread", () => MultiThreadFrobenius(I, n));
                 Console.WriteLine("==========");
             }
 
