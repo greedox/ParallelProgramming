@@ -4,9 +4,9 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace Frobenius
 {
-    class Program
+    public class Algorithm
     {
-        static void Main(string[] args)
+        public static void Main()
         {
             Console.Write("Input n: ");
             int n = int.Parse(Console.ReadLine());
@@ -23,7 +23,7 @@ namespace Frobenius
             Console.ReadKey();
         }
 
-        private static void OneThreadFrobenius(Matrix<double> I, int n)
+        public static void OneThreadFrobenius(Matrix<double> I, int n)
         {
             var A = I.SubMatrix(0, n / 2, 0, n / 2);
             var B = I.SubMatrix(0, n / 2, n / 2, n / 2);
@@ -43,7 +43,7 @@ namespace Frobenius
             M.SetSubMatrix(n / 2, n / 2, M4);
         }
 
-        private static void MultiThreadFrobenius(Matrix<double> I, int n)
+        public static void MultiThreadFrobenius(Matrix<double> I, int n)
         {
             var A = I.SubMatrix(0, n / 2, 0, n / 2);
             var B = I.SubMatrix(0, n / 2, n / 2, n / 2);
