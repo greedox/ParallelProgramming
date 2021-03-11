@@ -8,11 +8,6 @@ namespace Benchmark.Benchmarks
     {
         private const int MatrixSize = 1000;
 
-        public FrobeniusBenchmark()
-        {
-
-        }
-
         [Benchmark]
         public void FrobeniosOneThread()
         {
