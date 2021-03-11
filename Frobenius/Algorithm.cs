@@ -6,24 +6,7 @@ namespace Frobenius
 {
     public class Algorithm
     {
-        public static void Main()
-        {
-            Console.Write("Input n: ");
-            int n = int.Parse(Console.ReadLine());
-            var I = Matrix<double>.Build.Random(n, n);
-
-            for (int i = 1; i <= 10; i++)
-            {
-                Console.WriteLine("Iteration 1.");
-                InvokeWithTimer("One thread", () => OneThreadFrobenius(I, n));
-                InvokeWithTimer("Multithread", () => MultiThreadFrobenius(I, n));
-                Console.WriteLine("==========");
-            }
-
-            Console.ReadKey();
-        }
-
-        public static void OneThreadFrobenius(Matrix<double> I, int n)
+        public static Matrix<double> OneThreadFrobenius(Matrix<double> I, int n)
         {
             var A = I.SubMatrix(0, n / 2, 0, n / 2);
             var B = I.SubMatrix(0, n / 2, n / 2, n / 2);
@@ -41,9 +24,11 @@ namespace Frobenius
             M.SetSubMatrix(0, n / 2, M2);
             M.SetSubMatrix(n / 2, 0, M3);
             M.SetSubMatrix(n / 2, n / 2, M4);
+
+            return M;
         }
 
-        public static void MultiThreadFrobenius(Matrix<double> I, int n)
+        public static Matrix<double> MultiThreadFrobenius(Matrix<double> I, int n)
         {
             var A = I.SubMatrix(0, n / 2, 0, n / 2);
             var B = I.SubMatrix(0, n / 2, n / 2, n / 2);
@@ -70,6 +55,8 @@ namespace Frobenius
             M.SetSubMatrix(0, n / 2, M2);
             M.SetSubMatrix(n / 2, 0, M3);
             M.SetSubMatrix(n / 2, n / 2, M4);
+
+            return M;
         }
 
         private static void InvokeWithTimer(string title, Action action)
