@@ -16,7 +16,8 @@ namespace Benchmark
                 throw new ArgumentException($"{nameof(count)} should be greater or equal than '1'");
             }
 
-            var benhmarkInstance = (T)Activator.CreateInstance(typeof(T));
+            Type benchmarkType = typeof(T);
+            var benhmarkInstance = (T)Activator.CreateInstance(benchmarkType);
 
             var methods = typeof(T).GetMethods()
                       .Where(m => m.GetCustomAttributes(typeof(BenchmarkAttribute), false).Length > 0)
@@ -38,6 +39,8 @@ namespace Benchmark
                 }
             }
 
+            var className = benchmarkType.FullName;
+            Console.WriteLine($"Class report ({className})");
             var table = bencmarkResults.ToStringTable(
                 new[] { "Method", "Mean Time", "Std. Dev." },
                 r => r.Key, r => r.Value.Average(x => x.ExecutionTime), r => r.Value.StdDev(s => s.ExecutionTime));
