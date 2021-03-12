@@ -4,14 +4,24 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace Frobenius
 {
+    /// <summary>
+    /// https://vunivere.ru/work14851/page4
+    /// </summary>
     public class Algorithm
     {
-        public static Matrix<double> OneThreadFrobenius(Matrix<double> I, int n)
+        public static Matrix<double> OneThreadFrobenius(Matrix<double> matrix)
         {
-            var A = I.SubMatrix(0, n / 2, 0, n / 2);
-            var B = I.SubMatrix(0, n / 2, n / 2, n / 2);
-            var C = I.SubMatrix(n / 2, n / 2, 0, n / 2);
-            var D = I.SubMatrix(n / 2, n / 2, n / 2, n / 2);
+            int size = matrix.RowCount;
+            if (matrix.ColumnCount != size)
+            {
+                throw new ArgumentException($"{nameof(matrix)} should be a square matrix");
+            }
+
+            int halfSize = size / 2;
+            var A = matrix.SubMatrix(0, halfSize, 0, halfSize);
+            var B = matrix.SubMatrix(0, halfSize, halfSize, halfSize);
+            var C = matrix.SubMatrix(halfSize, halfSize, 0, halfSize);
+            var D = matrix.SubMatrix(halfSize, halfSize, halfSize, halfSize);
             var H = D - C * A.Inverse() * B;
 
             var M1 = A.Inverse() + A.Inverse() * B * H.Inverse() * C * A.Inverse();
@@ -19,21 +29,28 @@ namespace Frobenius
             var M3 = (H.Inverse() * C * A.Inverse()).Multiply(-1);
             var M4 = H.Inverse();
 
-            var M = Matrix<double>.Build.Dense(n, n);
+            var M = Matrix<double>.Build.Dense(size, size);
             M.SetSubMatrix(0, 0, M1);
-            M.SetSubMatrix(0, n / 2, M2);
-            M.SetSubMatrix(n / 2, 0, M3);
-            M.SetSubMatrix(n / 2, n / 2, M4);
+            M.SetSubMatrix(0, halfSize, M2);
+            M.SetSubMatrix(halfSize, 0, M3);
+            M.SetSubMatrix(halfSize, halfSize, M4);
 
             return M;
         }
 
-        public static Matrix<double> MultiThreadFrobenius(Matrix<double> I, int n)
+        public static Matrix<double> MultiThreadFrobenius(Matrix<double> matrix)
         {
-            var A = I.SubMatrix(0, n / 2, 0, n / 2);
-            var B = I.SubMatrix(0, n / 2, n / 2, n / 2);
-            var C = I.SubMatrix(n / 2, n / 2, 0, n / 2);
-            var D = I.SubMatrix(n / 2, n / 2, n / 2, n / 2);
+            int size = matrix.RowCount;
+            if (matrix.ColumnCount != size)
+            {
+                throw new ArgumentException($"{nameof(matrix)} should be a square matrix");
+            }
+
+            int halfSize = size / 2;
+            var A = matrix.SubMatrix(0, halfSize, 0, halfSize);
+            var B = matrix.SubMatrix(0, halfSize, halfSize, halfSize);
+            var C = matrix.SubMatrix(halfSize, halfSize, 0, halfSize);
+            var D = matrix.SubMatrix(halfSize, halfSize, halfSize, halfSize);
             var H = D - C * A.Inverse() * B;
 
             Matrix<double> M1 = null;
@@ -50,24 +67,13 @@ namespace Frobenius
             };
             Parallel.Invoke(frobeniusActions);
 
-            var M = Matrix<double>.Build.Dense(n, n);
+            var M = Matrix<double>.Build.Dense(size, size);
             M.SetSubMatrix(0, 0, M1);
-            M.SetSubMatrix(0, n / 2, M2);
-            M.SetSubMatrix(n / 2, 0, M3);
-            M.SetSubMatrix(n / 2, n / 2, M4);
+            M.SetSubMatrix(0, halfSize, M2);
+            M.SetSubMatrix(halfSize, 0, M3);
+            M.SetSubMatrix(halfSize, halfSize, M4);
 
             return M;
-        }
-
-        private static void InvokeWithTimer(string title, Action action)
-        {
-            var start = DateTime.Now;
-
-            action();
-
-            var end = DateTime.Now;
-
-            Console.WriteLine($"{title}: {end - start}");
         }
     }
 }
