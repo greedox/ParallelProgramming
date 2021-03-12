@@ -7,19 +7,23 @@ namespace Benchmark.Benchmarks
     public class FrobeniusBenchmark
     {
         private const int MatrixSize = 1000;
+        private Matrix<double> _matrix;
+
+        public FrobeniusBenchmark()
+        {
+            _matrix = Matrix<double>.Build.RandomSquare(MatrixSize);
+        }
 
         [Benchmark]
         public void FrobeniosOneThread()
         {
-            var I = Matrix<double>.Build.RandomSquare(MatrixSize);
-            Algorithm.OneThreadFrobenius(I, MatrixSize);
+            Algorithm.OneThreadFrobenius(_matrix);
         }
 
         [Benchmark]
         public void FrobeniosMultiThread()
         {
-            var I = Matrix<double>.Build.RandomSquare(MatrixSize);
-            Algorithm.MultiThreadFrobenius(I, MatrixSize);
+            Algorithm.MultiThreadFrobenius(_matrix);
         }
     }
 }
