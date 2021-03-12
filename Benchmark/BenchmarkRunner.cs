@@ -30,19 +30,32 @@ namespace Benchmark
 
             var bencmarkResults = new Dictionary<string, List<BenchmarkResult>>();
 
-            T benhmarkInstance = instanceCreation == InstanceCreation.Singleton ? CreateInstance<T>(benchmarkType) : null;
+            T benchmarkInstance = null;
+            if (instanceCreation == InstanceCreation.Singleton)
+            {
+                benchmarkInstance = CreateInstance<T>(benchmarkType);
+            }
+
             for (int i = 0; i < count; i++)
             {
-                benhmarkInstance = instanceCreation == InstanceCreation.Transient ? CreateInstance<T>(benchmarkType) : null;
+                if (instanceCreation == InstanceCreation.Transient)
+                {
+                    benchmarkInstance = CreateInstance<T>(benchmarkType);
+                }
+
                 foreach (var method in methods)
                 {
-                    benhmarkInstance = instanceCreation == InstanceCreation.Scoped ? CreateInstance<T>(benchmarkType) : null;
-                    if (benhmarkInstance == null)
+                    if (instanceCreation == InstanceCreation.Scoped)
                     {
-                        throw new ArgumentNullException(nameof(benhmarkInstance));
+                        benchmarkInstance = CreateInstance<T>(benchmarkType);
                     }
 
-                    var benchmarkResult = InvokeBenchmark(() => method.Invoke(benhmarkInstance, null));
+                    if (benchmarkInstance == null)
+                    {
+                        throw new ArgumentNullException(nameof(benchmarkInstance));
+                    }
+
+                    var benchmarkResult = InvokeBenchmark(() => method.Invoke(benchmarkInstance, null));
                     SaveBenchmarkResult(bencmarkResults, method, benchmarkResult);
                 }
             }
