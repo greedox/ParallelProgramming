@@ -15,7 +15,7 @@ namespace Benchmark
         /// <typeparam name="T">Benchmark class</typeparam>
         /// <param name="instanceCreation"><see cref="InstanceCreation"/></param>
         /// <param name="count">Count of method runs</param>
-        public static void Run<T>(InstanceCreation instanceCreation = InstanceCreation.Transient, int count = 15) where T : class
+        public static void Run<T>(InstanceCreation instanceCreation = InstanceCreation.Transient, int count = 15, bool showIntermediateResult = true) where T : class
         {
             if (count < 1)
             {
@@ -57,6 +57,11 @@ namespace Benchmark
 
                     var benchmarkResult = InvokeBenchmark(() => method.Invoke(benchmarkInstance, null));
                     SaveBenchmarkResult(bencmarkResults, method, benchmarkResult);
+
+                    if (showIntermediateResult)
+                    {
+                        Console.WriteLine($"{i + 1}. {method.Name}: {benchmarkResult.ExecutionTime}");
+                    }
                 }
             }
 
