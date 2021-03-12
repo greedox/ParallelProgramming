@@ -6,7 +6,7 @@ namespace Benchmark
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<FrobeniusBenchmark>(10);
+            BenchmarkRunner.Run<FrobeniusBenchmark>();
         }
     }
 }
