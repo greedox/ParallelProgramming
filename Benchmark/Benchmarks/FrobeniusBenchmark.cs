@@ -45,12 +45,14 @@ namespace Benchmark.Benchmarks
         }
 
         [Benchmark]
+        [IgnoreBenchmark]
         public void FrobeniosOneThreadLarge()
         {
             Algorithm.OneThreadFrobenius(_largeMatrix);
         }
 
         [Benchmark]
+        [IgnoreBenchmark]
         public void FrobeniosMultiThreadLarge()
         {
             Algorithm.MultiThreadFrobenius(_largeMatrix);

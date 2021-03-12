@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Benchmark.Attributes;
 using Shared;
 
@@ -24,9 +25,13 @@ namespace Benchmark
 
             Type benchmarkType = typeof(T);
 
-            var methods = benchmarkType.GetMethods()
-                      .Where(m => m.GetCustomAttributes(typeof(BenchmarkAttribute), false).Length > 0)
-                      .ToArray();
+            if (benchmarkType.GetCustomAttributes(typeof(IgnoreBenchmarkAttribute), false).Length > 0)
+            {
+                Console.WriteLine($"{benchmarkType.FullName} is ignored");
+                return;
+            }
+
+            var methods = GetBenchmarkMethods(benchmarkType);
 
             var bencmarkResults = new Dictionary<string, List<BenchmarkResult>>();
 
@@ -66,6 +71,14 @@ namespace Benchmark
             }
 
             ShowResultTable(benchmarkType, bencmarkResults);
+        }
+
+        private static MethodInfo[] GetBenchmarkMethods(Type benchmarkType)
+        {
+            return benchmarkType.GetMethods()
+                .Where(m => m.GetCustomAttributes(typeof(IgnoreBenchmarkAttribute), false).Length == 0)
+                .Where(m => m.GetCustomAttributes(typeof(BenchmarkAttribute), false).Length > 0)
+                .ToArray();
         }
 
         private static void ShowResultTable(Type benchmarkType, Dictionary<string, List<BenchmarkResult>> bencmarkResults)
